@@ -1,0 +1,41 @@
+{
+    "name": "danielsundermeier/laravel-make",
+    "description": "Description.",
+    "keywords": [],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daniel Sundermeier",
+            "email": "packages@d15r.de"
+        }
+    ],
+    "require": {
+
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.2",
+        "phpunit/phpunit": "^9.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "D15r\\MakeCommands\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "D15r\\MakeCommands\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "D15r\\MakeCommands\\MakeCommandsServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
