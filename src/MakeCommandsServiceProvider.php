@@ -5,6 +5,7 @@ namespace D15r\MakeCommands;
 use D15r\MakeCommands\Console\Commands\ControllerMakeCommand;
 use D15r\MakeCommands\Console\Commands\InstallMakeCommandsPackageCommand;
 use D15r\MakeCommands\Console\Commands\ModelMakeCommand;
+use D15r\MakeCommands\Console\Commands\TestMakeCommand;
 use D15r\MakeCommands\Console\Commands\ViewMakeCommand;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +24,7 @@ class MakeCommandsServiceProvider extends ServiceProvider implements DeferrableP
                 ControllerMakeCommand::class,
                 InstallMakeCommandsPackageCommand::class,
                 ModelMakeCommand::class,
+                TestMakeCommand::class,
                 ViewMakeCommand::class,
             ]);
         }
@@ -49,6 +51,7 @@ class MakeCommandsServiceProvider extends ServiceProvider implements DeferrableP
             ModelMakeCommand::class,
             ControllerMakeCommand::class,
             InstallMakeCommandsPackageCommand::class,
+            TestMakeCommand::class,
             ViewMakeCommand::class,
         ];
     }
