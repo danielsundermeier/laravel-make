@@ -25,7 +25,7 @@ class TestMakeCommand extends Command
     protected function getStub()
     {
         if ($this->option('unit')) {
-            return $this->laravel->basePath('stubs/unit-test.stub');
+            return $this->laravel->basePath('stubs/test.unit.stub');
         }
 
         if ($this->option('parent')) {
