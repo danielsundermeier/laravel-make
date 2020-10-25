@@ -1,0 +1,157 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use {{ rootNamespace }}Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use {{ namespacedParentModel }};
+
+class {{ class }} extends Controller
+{
+    protected $base_view_path = {{ model }}::VIEW_PATH;
+
+    public function __construct()
+    {
+        $this->authorizeResource({{ model }}::class, '{{ modelVariable }}');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request, {{ parentModel }} ${{ parentModelVariable }})
+    {
+        $this->authorize('viewAny', ${{ parentModelVariable }});
+
+        if ($request->wantsJson()) {
+            return ${{ parentModelVariable }}->{{ modelVariable }}s()
+                ->get();
+        }
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function create({{ parentModel }} ${{ parentModelVariable }})
+    {
+        $this->authorize('viewAny', ${{ parentModelVariable }});
+
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request, {{ parentModel }} ${{ parentModelVariable }})
+    {
+        $this->authorize('viewAny', ${{ parentModelVariable }});
+
+        if ($request->wantsJson()) {
+            return ${{ parentModelVariable }}->{{ modelVariable }}s()->create([
+                //
+            ]);
+        }
+
+        return redirect(${{ modelVariable }}->edit_path)
+            ->with('status', [
+                'type' => 'success',
+                'text' => 'Datensatz erstellt.',
+            ]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Request $request, {{ parentModel }} ${{ parentModelVariable }}, {{ model }} ${{ modelVariable }})
+    {
+        if ($request->wantsJson()) {
+            return ${{ modelVariable }};
+        }
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function edit({{ parentModel }} ${{ parentModelVariable }}, {{ model }} ${{ modelVariable }})
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, {{ parentModel }} ${{ parentModelVariable }}, {{ model }} ${{ modelVariable }})
+    {
+        $attributes = $request->validate([
+            //
+        ]);
+
+        ${{ modelVariable }}->update($attributes);
+
+        if ($request->wantsJson()) {
+            return ${{ modelVariable }};
+        }
+
+        return back()
+            ->with('status', [
+                'type' => 'success',
+                'text' => 'Datensatz gespeichert.',
+            ]);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \{{ namespacedParentModel }}  ${{ parentModelVariable }}
+     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy({{ parentModel }} ${{ parentModelVariable }}, {{ model }} ${{ modelVariable }})
+    {
+        if ($is_deletable = ${{ modelVariable }}->isDeletable()) {
+            ${{ modelVariable }}->delete();
+            $status = [
+                'type' => 'success',
+                'text' => 'Datensatz gelöscht.',
+            ];
+        }
+        else {
+            $status = [
+                'type' => 'danger',
+                'text' => 'Datensatz kann nicht gelöscht werden.',
+            ];
+        }
+
+        if ($request->wantsJson()) {
+            return [
+                'deleted' => $is_deletable,
+            ];
+        }
+
+        return redirect(${{ parentModelVariable }}->path)
+            ->with('status', $status);
+    }
+}

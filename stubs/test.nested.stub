@@ -3,6 +3,8 @@
 namespace {{ namespace }};
 
 use {{ namespacedModel }};
+use {{ namespacedParentModel }};
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -19,7 +21,7 @@ class {{ class }} extends TestCase
      */
     public function guests_can_not_access_the_following_routes()
     {
-        $model = $this->class_name::factory()->create();
+        $model = $this->class_name::factory($this->class_name)->create();
 
         $routes = [
             'index' => $model->index_path,
@@ -41,30 +43,27 @@ class {{ class }} extends TestCase
         $modelOfADifferentUser = $this->class_name::factory()->create();
 
         $this->a_user_can_not_see_models_from_a_different_user($modelOfADifferentUser);
+
         $this->a_different_user_gets_a_403('get', $modelOfADifferentUser->index_path);
     }
 
     /**
      * @test
      */
-    public function a_user_can_see_the_index_view()
+    public function a_user_can_get_a_collection_of_models()
     {
-        $this->getIndexViewResponse()
-            ->assertViewIs($this->base_view_path . '.index');
-    }
+        $this->withoutExceptionHandling();
 
-    /**
-     * @test
-     */
-    public function a_user_can_get_a_paginated_collection_of_models()
-    {
         $this->signIn();
 
-        $models = $this->class_name::factory()->count(3)->create([
+        $parent = $this->createParent();
 
+        $models = $this->class_name::factory()->count(3)->create([
+            'user_id' => $this->user->id,
+            '{{ parentModelVariable }}_id' => $parent->id,
         ]);
 
-        $this->getPaginatedCollection($models->first()->index_path);
+        $this->getCollection($models->first()->index_path);
     }
 
     /**
@@ -72,7 +71,7 @@ class {{ class }} extends TestCase
      */
     public function a_user_can_create_a_model()
     {
-        $this->withoutExceptionHandling();
+        $parent = $this->createParent();
 
         $this->signIn();
 
@@ -80,7 +79,11 @@ class {{ class }} extends TestCase
 
         ];
 
-        $this->post($this->class_name::indexPath(), $data)
+        $attributes = [
+            '{{ parentModelVariable }}' => $parent->id
+        ];
+
+        $this->post($this->class_name::indexPath($attributes), $data)
             ->assertStatus(Response::HTTP_CREATED);
 
         $this->assertDatabaseHas((new $this->class_name)->getTable(), $data);
@@ -89,27 +92,13 @@ class {{ class }} extends TestCase
     /**
      * @test
      */
-    public function a_user_can_see_the_show_view()
+    public function a_user_can_get_the_show_json()
     {
-        $this->withoutExceptionHandling();
+        $this->signIn();
 
         $model = $this->createModel();
 
-        $this->getShowViewResponse($model->route_parameter)
-            ->assertViewIs($this->base_view_path . '.show')
-            ->assertViewHas('model');
-    }
-
-    /**
-     * @test
-     */
-    public function a_user_can_see_the_edit_view()
-    {
-        $model = $this->createModel();
-
-        $this->getEditViewResponse($model->route_parameter)
-            ->assertViewIs($this->base_view_path . '.edit')
-            ->assertViewHas('model');
+        $response = $this->getShowJsonResponse($model->route_parameter, $model);
     }
 
     /**
@@ -124,7 +113,7 @@ class {{ class }} extends TestCase
         $this->signIn();
 
         $data = [
-
+            //
         ];
 
         $response = $this->put($model->path, $data)
@@ -147,5 +136,12 @@ class {{ class }} extends TestCase
 
         $this->deleteModel($model)
             ->assertRedirect();
+    }
+
+    protected function createParent() : Model
+    {
+        return {{ parentModel }}::factory()->create([
+            'user_id' => $this->user->id,
+        ]);
     }
 }
