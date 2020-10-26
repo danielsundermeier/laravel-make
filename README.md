@@ -16,7 +16,7 @@ composer require danielsundermeier/laravel-make
 After that you may copy the stubs.
 
 ```php
-php artisan makecommands:install
+php artisan make:install
 ```
 
 ## Usage

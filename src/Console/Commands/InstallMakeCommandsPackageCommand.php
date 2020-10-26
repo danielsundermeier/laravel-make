@@ -9,7 +9,7 @@ class InstallMakeCommandsPackageCommand extends Command
 {
     protected $hidden = true;
 
-    protected $signature = 'makecommands:install';
+    protected $signature = 'make:install';
 
     protected $description = 'Install the MakeCommandsPackage';
 
