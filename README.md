@@ -48,6 +48,13 @@ php artisan make:test ModelTest --parent=Parent
 ```
 
 ### Make Views
+
 ```php
 php artisan make:view model/index
+```
+
+### Make Traits
+
+```php
+php artisan make:trait Foo\\Bar
 ```
